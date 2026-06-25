@@ -1,0 +1,18 @@
+{
+  "name": "connector",
+  "label": "Connector",
+  "plural": "connectors",
+  "prefix": "CON",
+  "fields": [
+    {"name": "num_pins", "label": "Number of Pins", "type": "number", "required": true, "placeholder": "e.g., 4"},
+    {"name": "pitch", "label": "Pitch", "type": "text", "required": true, "placeholder": "e.g., 2.54mm, 1.27mm"},
+    {"name": "mounting_type", "label": "Mounting Type", "type": "select", "required": true, "options": ["Through Hole", "Surface Mount", "Panel Mount", "Free Hanging"]},
+    {"name": "gender", "label": "Gender", "type": "select", "options": ["Male", "Female", "Neutral/Hermaphroditic"]},
+    {"name": "current_rating", "label": "Current Rating per Pin", "type": "text", "placeholder": "e.g., 2A per pin"},
+    {"name": "rated_voltage", "label": "Rated Voltage", "type": "text", "placeholder": "e.g., 250V AC"},
+    {"name": "contact_resistance", "label": "Contact Resistance", "type": "text", "placeholder": "e.g., 20mΩ max"},
+    {"name": "insulation_resistance", "label": "Insulation Resistance", "type": "text", "placeholder": "e.g., 100MΩ min"},
+    {"name": "mating_cycles", "label": "Mating Cycles", "type": "text", "placeholder": "e.g., 500 cycles (optional)"},
+    {"name": "orientation", "label": "Orientation", "type": "select", "options": ["Vertical", "Right Angle", "Horizontal", "Any"]}
+  ]
+}

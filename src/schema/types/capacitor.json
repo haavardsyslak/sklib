@@ -1,0 +1,17 @@
+{
+  "name": "capacitor",
+  "label": "Capacitor",
+  "plural": "capacitors",
+  "prefix": "CAP",
+  "fields": [
+    {"name": "capacitance", "label": "Capacitance", "type": "text", "required": true, "placeholder": "100nF", "help": "e.g., 100nF, 10uF"},
+    {"name": "dielectric", "label": "Dielectric", "type": "select", "required": true, "options": ["X5R", "X7R", "X6S", "C0G", "NP0", "Y5V", "Film", "Electrolytic", "Tantalum"]},
+    {"name": "package", "label": "Package", "type": "text", "required": true, "placeholder": "0402", "help": "e.g., 0402, 0603, 0805"},
+    {"name": "tolerance", "label": "Tolerance", "type": "text", "placeholder": "5%", "help": "e.g 1%, 5%"},
+    {"name": "rated_voltage", "label": "Rated Voltage", "type": "text", "placeholder": "50V", "help": "e.g., 50V, 100V"},
+    {"name": "esr", "label": "ESR", "type": "text", "placeholder": "10mΩ", "help": "Equivalent Series Resistance"},
+    {"name": "esl", "label": "ESL", "type": "text", "placeholder": "Optional", "help": "Equivalent Series Inductance"},
+    {"name": "leakage_current", "label": "Leakage Current", "type": "text", "placeholder": "Optional"},
+    {"name": "srf", "label": "Self-Resonant Frequency", "type": "text", "placeholder": "Optional (MHz)"}
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "columns": {
+    "id": {
+      "required": true,
+      "unique": true,
+      "pattern": "^[A-Z]{2,4}-\\d{4,}$",
+      "description": "Unique part identifier (e.g., CAP-0001, RES-0001)"
+    },
+    "component_type": {
+      "required": true,
+      "description": "Component type category"
+    },
+    "mpn": {
+      "required": true,
+      "description": "Manufacturer Part Number"
+    },
+    "manufacturer": {
+      "required": true,
+      "description": "Manufacturer name"
+    },
+    "description": {
+      "required": true,
+      "description": "Human-readable part description"
+    },
+    "value": {
+      "required": false,
+      "description": "Component value (e.g., 100nF, 10K)"
+    },
+    "tolerance": {
+      "required": false,
+      "description": "Tolerance (e.g., 5%, 1%)"
+    },
+    "package": {
+      "required": false,
+      "description": "Package/case size (e.g., 0402, 0603, SOIC-8)"
+    },
+    "rated_voltage": {
+      "required": false,
+      "description": "Rated voltage (e.g., 50V, 100V)"
+    },
+    "operating_temp": {
+      "required": false,
+      "description": "Operating temperature range in degrees (-55, 125)"
+    },
+    "symbol": {
+      "required": true,
+      "pattern": "^[\\w-]+:[\\w-]+$",
+      "description": "KiCad symbol reference (Library:Symbol)"
+    },
+    "footprint": {
+      "required": true,
+      "pattern": "^[\\w-]+:[\\w-]+$",
+      "description": "KiCad footprint reference (Library:Footprint)"
+    },
+    "datasheet": {
+      "required": false,
+      "pattern": "^https?://",
+      "description": "URL to datasheet"
+    },
+    "supplier": {
+      "required": false,
+      "description": "Preferred supplier (e.g., DigiKey, Mouser)"
+    },
+    "supplier_sku": {
+      "required": false,
+      "description": "Supplier SKU/part number"
+    },
+    "lifecycle_status": {
+      "required": true,
+      "enum": ["active", "deprecated", "obsolete"],
+      "description": "Part lifecycle status"
+    },
+    "notes": {
+      "required": false,
+      "description": "Additional notes"
+    },
+    "keywords": {
+      "required": false,
+      "description": "Space-separated search keywords"
+    },
+    "exclude_from_bom": {
+      "required": false,
+      "enum": ["0", "1"],
+      "description": "Exclude from BOM (0=include, 1=exclude)"
+    }
+  },
+  "id_prefixes": {
+    "capacitors": "CAP",
+    "resistors": "RES",
+    "inductors": "IND",
+    "diodes": "DIO",
+    "transistors": "TRN",
+    "ics_analog": "ICA",
+    "ics_digital": "ICD",
+    "connectors": "CON",
+    "crystals": "XTL",
+    "leds": "LED"
+  },
+  "common_symbols": {
+    "capacitor": "Device:C_small",
+    "resistor": "Device:R_small",
+    "inductor": "Device:L_small",
+    "diode": "Device:D",
+    "connector": "Connector:Conn_01x*"
+  },
+  "common_footprints": {
+    "0402": {
+      "capacitor": "Capacitor_SMD:C_0402_1005Metric",
+      "resistor": "Resistor_SMD:R_0402_1005Metric"
+    },
+    "0603": {
+      "capacitor": "Capacitor_SMD:C_0603_1608Metric",
+      "resistor": "Resistor_SMD:R_0603_1608Metric"
+    },
+    "0805": {
+      "capacitor": "Capacitor_SMD:C_0805_2012Metric",
+      "resistor": "Resistor_SMD:R_0805_2012Metric"
+    },
+    "1206": {
+      "capacitor": "Capacitor_SMD:C_1206_3216Metric",
+      "resistor": "Resistor_SMD:R_1206_3216Metric"
+    }
+  }
+}

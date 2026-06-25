@@ -1,0 +1,179 @@
+{
+    "meta": {
+        "version": 0
+    },
+    "name": "SKLib Parts",
+    "description": "Atomic parts library with manufacturer-specific components",
+    "source": {
+        "type": "odbc",
+        "dsn": "",
+        "connection_string": "Driver=SQLite3;Database=/home/syslak/repos/sklib/generated/sklib.db"
+    },
+    "libraries": [
+        {
+            "name": "Capacitors",
+            "table": "capacitors",
+            "key": "id",
+            "symbols": "symbol",
+            "footprints": "footprint",
+            "fields": [
+                {
+                    "column": "mpn",
+                    "name": "MPN",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                },
+                {
+                    "column": "manufacturer",
+                    "name": "Manufacturer",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                },
+                {
+                    "column": "value",
+                    "name": "Value",
+                    "visible_on_add": true,
+                    "visible_in_chooser": true,
+                    "show_name": false
+                },
+                {
+                    "column": "package",
+                    "name": "Package",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                },
+                {
+                    "column": "datasheet",
+                    "name": "Datasheet",
+                    "visible_on_add": false,
+                    "visible_in_chooser": false
+                },
+                {
+                    "column": "status",
+                    "name": "Status",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                }
+            ],
+            "properties": {
+                "description": "description",
+                "keywords": "keywords",
+                "exclude_from_bom": "exclude_from_bom"
+            }
+        },
+        {
+            "name": "Connectors",
+            "table": "connectors",
+            "key": "id",
+            "symbols": "symbol",
+            "footprints": "footprint",
+            "fields": [
+                {
+                    "column": "mpn",
+                    "name": "MPN",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                },
+                {
+                    "column": "manufacturer",
+                    "name": "Manufacturer",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                },
+                {
+                    "column": "value",
+                    "name": "Value",
+                    "visible_on_add": true,
+                    "visible_in_chooser": true,
+                    "show_name": false
+                },
+                {
+                    "column": "package",
+                    "name": "Package",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                },
+                {
+                    "column": "datasheet",
+                    "name": "Datasheet",
+                    "visible_on_add": false,
+                    "visible_in_chooser": false
+                },
+                {
+                    "column": "status",
+                    "name": "Status",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                }
+            ],
+            "properties": {
+                "description": "description",
+                "keywords": "keywords",
+                "exclude_from_bom": "exclude_from_bom"
+            }
+        },
+        {
+            "name": "Resistors",
+            "table": "resistors",
+            "key": "id",
+            "symbols": "symbol",
+            "footprints": "footprint",
+            "fields": [
+                {
+                    "column": "mpn",
+                    "name": "MPN",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                },
+                {
+                    "column": "manufacturer",
+                    "name": "Manufacturer",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                },
+                {
+                    "column": "value",
+                    "name": "Value",
+                    "visible_on_add": true,
+                    "visible_in_chooser": true,
+                    "show_name": false
+                },
+                {
+                    "column": "package",
+                    "name": "Package",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                },
+                {
+                    "column": "datasheet",
+                    "name": "Datasheet",
+                    "visible_on_add": false,
+                    "visible_in_chooser": false
+                },
+                {
+                    "column": "status",
+                    "name": "Status",
+                    "visible_on_add": false,
+                    "visible_in_chooser": true,
+                    "show_name": true
+                }
+            ],
+            "properties": {
+                "description": "description",
+                "keywords": "keywords",
+                "exclude_from_bom": "exclude_from_bom"
+            }
+        }
+    ]
+}

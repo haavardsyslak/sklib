@@ -1,0 +1,18 @@
+{
+  "name": "inductor",
+  "label": "Inductor",
+  "plural": "inductors",
+  "prefix": "IND",
+  "fields": [
+    {"name": "inductance", "label": "Inductance", "type": "text", "required": true, "placeholder": "10uH", "help": "e.g., 10uH, 1mH"},
+    {"name": "package", "label": "Package", "type": "text", "required": true, "placeholder": "e.g., 1210"},
+    {"name": "tolerance", "label": "Tolerance", "type": "select", "options": ["20%", "10%", "5%", "2%", "1%"]},
+    {"name": "isat", "label": "Saturation Current (Isat)", "type": "text", "placeholder": "e.g., 2A", "help": "Required for power inductors"},
+    {"name": "irms", "label": "Thermal Current (Irms)", "type": "text", "placeholder": "e.g., 1.5A", "help": "Required for power inductors"},
+    {"name": "dcr", "label": "DC Resistance (DCR)", "type": "text", "placeholder": "e.g., 50mΩ"},
+    {"name": "core_material", "label": "Core Material", "type": "text", "placeholder": "e.g., Ferrite"},
+    {"name": "shielded", "label": "Shielded", "type": "select", "options": ["Shielded", "Unshielded"]},
+    {"name": "srf", "label": "Self-Resonant Frequency", "type": "text", "placeholder": "Optional (MHz)"},
+    {"name": "q_factor", "label": "Q Factor", "type": "text", "placeholder": "Optional"}
+  ]
+}

@@ -1,0 +1,58 @@
+<fieldset>
+    <legend class="text-lg font-semibold text-white mb-4">Procurement & Status</legend>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+            <label for="supplier" class="block text-sm font-medium text-gray-300">Supplier</label>
+            <input type="text" name="supplier" id="supplier" value="{{ component.supplier if component else '' }}"
+                   placeholder="DigiKey, Mouser, etc."
+                   class="mt-1 block w-full rounded-md border-gray-600 bg-gray-900 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+        </div>
+
+        <div>
+            <label for="supplier_sku" class="block text-sm font-medium text-gray-300">Supplier SKU</label>
+            <input type="text" name="supplier_sku" id="supplier_sku" value="{{ component.supplier_sku if component else '' }}"
+                   class="mt-1 block w-full rounded-md border-gray-600 bg-gray-900 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+        </div>
+
+        <div>
+            <label for="lifecycle_status" class="block text-sm font-medium text-gray-300">Lifecycle Status <span class="text-red-500">*</span></label>
+            <select name="lifecycle_status" id="lifecycle_status" required
+                    class="mt-1 block w-full rounded-md border-gray-600 bg-gray-900 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                <option value="active" {% if not component or component.lifecycle_status == 'active' %}selected{% endif %}>Active</option>
+                <option value="deprecated" {% if component and component.lifecycle_status == 'deprecated' %}selected{% endif %}>Deprecated</option>
+                <option value="obsolete" {% if component and component.lifecycle_status == 'obsolete' %}selected{% endif %}>Obsolete</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="datasheet" class="block text-sm font-medium text-gray-300">Datasheet URL</label>
+            <input type="url" name="datasheet" id="datasheet" value="{{ component.datasheet if component else '' }}"
+                   placeholder="https://..."
+                   class="mt-1 block w-full rounded-md border-gray-600 bg-gray-900 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+        </div>
+
+        <div class="sm:col-span-2">
+            <label for="keywords" class="block text-sm font-medium text-gray-300">Keywords</label>
+            <input type="text" name="keywords" id="keywords" value="{{ component.keywords if component else '' }}"
+                   placeholder="capacitor mlcc x7r smd"
+                   class="mt-1 block w-full rounded-md border-gray-600 bg-gray-900 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+            <p class="mt-1 text-xs text-gray-500">Space-separated keywords for search</p>
+        </div>
+
+        <div class="sm:col-span-2">
+            <label for="notes" class="block text-sm font-medium text-gray-300">Notes</label>
+            <textarea name="notes" id="notes" rows="3"
+                      class="mt-1 block w-full rounded-md border-gray-600 bg-gray-900 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ component.notes if component else '' }}</textarea>
+        </div>
+
+        <div class="sm:col-span-2">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="exclude_from_bom" value="1"
+                       {% if component and component.exclude_from_bom == '1' %}checked{% endif %}
+                       class="rounded border-gray-600 text-blue-600 bg-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <span class="ml-2 text-sm text-gray-300">Exclude from BOM</span>
+            </label>
+            <p class="mt-1 text-xs text-gray-500 ml-6">For test points, mounting holes, etc.</p>
+        </div>
+    </div>
+</fieldset>

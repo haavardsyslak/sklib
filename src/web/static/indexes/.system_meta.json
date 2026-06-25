@@ -1,0 +1,14 @@
+{
+  "fingerprint": {
+    "symbols": {
+      "path": "/usr/share/kicad/symbols",
+      "mtime_ns": 1779111967357932213
+    },
+    "footprints": {
+      "path": "/usr/share/kicad/footprints",
+      "mtime_ns": 1767973788210832364
+    }
+  },
+  "sym_count": 22642,
+  "fp_count": 15433
+}

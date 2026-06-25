@@ -1,0 +1,26 @@
+[project]
+name = "sklib"
+version = "0.2.0"
+description = "KiCad DBLib parts library with web UI"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "jinja2>=3.1.0",
+    "pydantic>=2.0.0",
+    "python-multipart>=0.0.9",
+    "requests>=2.33.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "python-lsp-server>=1.12.0",
+    "ruff>=0.8.0",
+    "pytest>=8.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+]

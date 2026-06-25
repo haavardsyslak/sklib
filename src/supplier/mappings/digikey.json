@@ -1,0 +1,88 @@
+{
+  "base": {
+    "mpn":               ["ManufacturerProductNumber"],
+    "manufacturer":       ["Manufacturer.Name"],
+    "description":        ["Description.ProductDescription", "Description.DetailedDescription"],
+    "lifecycle_status":  ["ProductStatus.Status"]
+  },
+  "general": {
+    "package":        ["Parameters:Package / Case", "Parameters:Case Package"],
+    "rated_voltage": ["Parameters:Voltage - Rated", "Parameters:Voltage Rated", "Parameters:Rated Voltage"],
+    "tolerance":     ["Parameters:Tolerance"],
+    "operating_temp": ["Parameters:Operating Temperature", "Parameters:Operating Temp"]
+  },
+  "procurement": {
+    "supplier":     ["_literal:DigiKey"],
+    "supplier_sku": ["ProductVariations[*].DigiKeyProductNumber"],
+    "datasheet":    ["DatasheetUrl"]
+  },
+  "lifecycle_map": {
+    "Active":             "active",
+    "Not For New Designs": "deprecated",
+    "Obsolete":           "obsolete",
+    "End Of Life":        "obsolete",
+    "Discontinued":        "obsolete"
+  },
+  "category_map": {
+    "Capacitors":              "capacitor",
+    "Ceramic Capacitors":      "capacitor",
+    "Film Capacitors":         "capacitor",
+    "Electrolytic Capacitors": "capacitor",
+    "Tantalum Capacitors":     "capacitor",
+    "Resistors":               "resistor",
+    "Inductors":               "inductor",
+    "Diodes":                  "diode",
+    "LEDs":                    "led",
+    "Connectors":              "connector"
+  },
+  "parameters": {
+    "capacitor": {
+      "capacitance":     ["Parameters:Capacitance"],
+      "dielectric":      ["Parameters:Temperature Coefficient", "Parameters:Dielectric"],
+      "ratings":         ["Parameters:Ratings"],
+      "mounting_type":   ["Parameters:Mounting Type"],
+      "esr":             ["Parameters:ESR (Equivalent Series Resistance)", "Parameters:ESR"],
+      "leakage_current":  ["Parameters:Leakage Current"],
+      "ripple_current":  ["Parameters:Ripple Current", "Parameters:RMS Current"],
+      "srf":             ["Parameters:Self Resonant Frequency", "Parameters:SRF"]
+    },
+    "resistor": {
+      "resistance":          ["Parameters:Resistance"],
+      "power_rating":        ["Parameters:Power Rating", "Parameters:Power"],
+      "temp_coefficient":     ["Parameters:Temperature Coefficient"],
+      "voltage_rating":      ["Parameters:Voltage - Rated", "Parameters:Voltage Rated", "Parameters:Voltage Rating"],
+      "type_film":           ["Parameters:Composition", "Parameters:Film Type", "Parameters:Technology"]
+    },
+    "inductor": {
+      "inductance":    ["Parameters:Inductance"],
+      "isat":          ["Parameters:Current - Saturation (Isat)", "Parameters:Saturation Current"],
+      "irms":          ["Parameters:Current - RMS Current (Irms)", "Parameters:RMS Current"],
+      "dcr":           ["Parameters:DC Resistance (DCR)", "Parameters:DCR"],
+      "core_material": ["Parameters:Core Material", "Parameters:Material"],
+      "shielded":      ["Parameters:Shielding", "Parameters:Shielded"],
+      "srf":           ["Parameters:Self Resonant Frequency", "Parameters:SRF"],
+      "q_factor":      ["Parameters:Q Factor", "Parameters:Q"]
+    },
+    "diode": {
+      "diode_type":         ["Parameters:Diode Type", "Parameters:Type"],
+      "forward_voltage":    ["Parameters:Voltage - Forward (Vf) (Max) @ If", "Parameters:Forward Voltage"],
+      "forward_current":     ["Parameters:Current - Average Rectified (Io)", "Parameters:Forward Current"],
+      "reverse_voltage":    ["Parameters:Voltage - Peak Reverse (Max)", "Parameters:Reverse Voltage", "Parameters:VR"],
+      "reverse_leakage":    ["Parameters:Reverse Leakage Current"],
+      "recovery_time":      ["Parameters:Recovery Time", "Parameters:trr"],
+      "power_dissipation":  ["Parameters:Power - Peak Pulse", "Parameters:Power Dissipation"],
+      "zener_voltage":      ["Parameters:Zener Voltage"],
+      "clamping_voltage":   ["Parameters:Voltage - Clamping (Max) @ Ipp", "Parameters:Clamping Voltage"]
+    },
+    "connector": {
+      "pitch":                ["Parameters:Pitch"],
+      "mounting_type":        ["Parameters:Mounting Type"],
+      "gender":               ["Parameters:Gender"],
+      "current_rating":       ["Parameters:Current Rating"],
+      "voltage_rating":       ["Parameters:Voltage Rating"],
+      "contact_resistance":   ["Parameters:Contact Resistance"],
+      "insulation_resistance":["Parameters:Insulation Resistance"],
+      "mating_cycles":        ["Parameters:Mating Cycles"]
+    }
+  }
+}

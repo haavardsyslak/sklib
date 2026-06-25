@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_edit %}Edit{% else %}New{% endif %} {{ type_info.label }} - SKLib{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/form.css">
+{% endblock %}
+
+{% block content %}
+{% include 'includes/dialogs/footprint.html' %}
+{% include 'includes/dialogs/digikey-modal.html' %}
+{% include 'includes/dialogs/digikey-confirm.html' %}
+
+<div class="max-w-3xl mx-auto">
+    {% include 'includes/form/header.html' %}
+
+    <form method="POST" action="/components{% if is_edit %}/{{ component_type }}/{{ component.id }}{% endif %}"
+          class="bg-gray-800 shadow rounded-lg overflow-hidden" id="component-form">
+        {% if not is_edit %}
+        <input type="hidden" name="component_type" value="{{ component_type }}">
+        {% endif %}
+        <div class="px-6 py-6 space-y-8">
+            {% include 'includes/form/basic.html' %}
+            {% include 'includes/form/kicad.html' %}
+            {% include 'includes/form/specs.html' %}
+            {% include 'includes/form/general.html' %}
+            {% include 'includes/form/custom_params.html' %}
+            {% include 'includes/form/procurement.html' %}
+        </div>
+        {% include 'includes/form/submit.html' %}
+    </form>
+</div>
+
+<script type="module" src="/static/js/form.js"></script>
+{% endblock %}

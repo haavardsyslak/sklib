@@ -1,0 +1,38 @@
+# Generated files
+/generated/
+
+# Secrets / local config
+.env
+
+# Runtime logs
+/logs/
+
+# Scratch API response dumps (root-level only; real JSON lives under src/ and kicad/)
+/*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+
+# Virtual environments
+venv/
+.venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.orig

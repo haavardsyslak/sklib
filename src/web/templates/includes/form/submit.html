@@ -1,0 +1,10 @@
+<div class="px-6 py-4 bg-gray-900 border-t border-gray-700 flex justify-between">
+    <a href="/components{% if component %}?component_type={{ component.component_type }}{% endif %}"
+       class="px-4 py-2 border border-gray-600 rounded-md text-gray-300 hover:bg-gray-700">
+        Cancel
+    </a>
+    <button type="submit"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500">
+        {% if is_edit %}Update{% else %}Create{% endif %} Component
+    </button>
+</div>

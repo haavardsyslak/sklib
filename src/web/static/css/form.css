@@ -1,0 +1,40 @@
+:root {
+    --input-bg: #1f2937;
+    --input-border: #4b5563;
+    --input-focus-border: #3b82f6;
+    --input-focus-ring: #3b82f6;
+    --dialog-bg: #1f2937;
+    --dialog-border: #4b5563;
+}
+
+.symbol-results,
+.footprint-results {
+    position: absolute;
+    z-index: 50;
+}
+
+.symbol-results.hidden,
+.footprint-results.hidden {
+    display: none;
+}
+
+/* Auto-fill visual feedback */
+.autofilled {
+    animation: autofill-pulse 2s ease-out;
+    border-color: #10b981 !important;
+}
+
+@keyframes autofill-pulse {
+    0% {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+    }
+    50% {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+    100% {
+        border-color: #4b5563;
+        box-shadow: none;
+    }
+}
