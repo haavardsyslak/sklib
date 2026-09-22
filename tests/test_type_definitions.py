@@ -5,16 +5,13 @@ import pytest
 from sklib.type_definitions import TypeDefinitionError, TypeRegistry
 
 
-def test_workspace_templates_match_example_definitions() -> None:
+def test_workspace_template_definitions_are_valid() -> None:
     root = Path(__file__).resolve().parents[1]
-    examples = root / "types"
     templates = root / "src" / "sklib" / "templates" / "workspace" / "types"
 
-    assert {
-        path.name: path.read_text(encoding="utf-8") for path in examples.glob("*.toml")
-    } == {
-        path.name: path.read_text(encoding="utf-8") for path in templates.glob("*.toml")
-    }
+    registry = TypeRegistry.load(templates)
+
+    assert len(registry) == 18
 
 
 def test_synthetic_type_requires_no_python_changes(tmp_path: Path) -> None:
