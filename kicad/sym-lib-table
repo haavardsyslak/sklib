@@ -1,4 +1,0 @@
-(sym_lib_table
-	(version 7)
-	(lib (name "#Connectors") (type "KiCad") (uri "${SKLIB_PATH}/Connectors.kicad_sym") (options "") (descr "Connectors"))
-)
