@@ -1,0 +1,69 @@
+schema_version = 1
+name = "mosfet"
+label = "MOSFET"
+plural = "MOSFETs"
+prefix = "MOS"
+value_field = "mpn"
+
+[[fields]]
+name = "type"
+label = "Type"
+kind = "enum"
+required = true
+options = ["NMOS", "PMOS"]
+
+[[fields]]
+name = "drain_source_voltage"
+label = "Drain-source voltage"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(mV|V|kV)$'
+placeholder = "60V"
+
+[[fields]]
+name = "mode"
+label = "Mode"
+kind = "enum"
+options = ["Enhancement", "Depletion"]
+
+[[fields]]
+name = "configuration"
+label = "Configuration"
+kind = "string"
+placeholder = "Single"
+
+[[fields]]
+name = "continuous_drain_current"
+label = "Continuous drain current"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(uA|mA|A|kA)$'
+placeholder = "5A"
+
+[[fields]]
+name = "maximum_gate_source_voltage"
+label = "VGS max"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(mV|V|kV)$'
+placeholder = "20V"
+help = "Absolute maximum gate-source voltage magnitude"
+
+[[fields]]
+name = "gate_threshold_voltage"
+label = "VGS(th)"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(mV|V)( to (0|[1-9][0-9]*)(\.[0-9]+)?(mV|V))?$'
+placeholder = "1V to 2.5V"
+help = "Datasheet threshold value or range; not recommended gate-drive voltage"
+
+[[fields]]
+name = "power_dissipation"
+label = "Power dissipation"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(uW|mW|W|kW)$'
+placeholder = "2W"
+
+[[fields]]
+name = "package"
+label = "Package"
+kind = "string"
+placeholder = "SO-8"

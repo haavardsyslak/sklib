@@ -1,0 +1,9 @@
+[library]
+name = "My KiCad Parts"
+description = "Git-backed KiCad component library"
+
+[paths]
+parts = "parts"
+types = "types"
+kicad = "kicad"
+generated = "generated"

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}{{ part.mpn }} · {{ workspace.name }}{% endblock %}
+{% block content %}
+<a class="back-link" href="/components?component_type={{ part.component_type }}">← Back to {{ definition.plural|lower }}</a>
+<section class="detail-heading">
+    <div>
+        <div class="heading-line">
+            <h1>{{ part.mpn }}</h1>
+            <span class="status {{ part.manufacturer_status }}">{{ part.manufacturer_status|replace('_', ' ') }}</span>
+        </div>
+        <p class="detail-description">{{ part.description }}</p>
+        <p class="muted">{{ part.manufacturer }} · <span class="mono">{{ part.id }}</span></p>
+    </div>
+    <a class="button primary" href="/components/{{ part.component_type }}/{{ part.id }}/edit">
+        Edit component
+    </a>
+</section>
+
+<div class="detail-layout">
+    <div class="detail-card">
+        <section class="detail-section">
+            <h2>Overview</h2>
+            <dl class="detail-grid">
+                <div><dt>Component type</dt><dd>{{ definition.label }}</dd></div>
+                <div><dt>Manufacturer</dt><dd>{{ part.manufacturer }}</dd></div>
+                <div><dt>MPN</dt><dd class="mono">{{ part.mpn }}</dd></div>
+                <div><dt>Lifecycle status</dt><dd><span class="status {{ part.manufacturer_status }}">{{ part.manufacturer_status|replace('_', ' ') }}</span></dd></div>
+                {% if part.datasheet %}
+                <div class="wide"><dt>Datasheet</dt><dd><a class="external-link" href="{{ part.datasheet }}" target="_blank" rel="noreferrer">Open datasheet <span aria-hidden="true">↗</span></a></dd></div>
+                {% endif %}
+            </dl>
+        </section>
+
+        <section class="detail-section">
+            <h2>{{ definition.label }} specifications</h2>
+            <dl class="detail-grid">
+            {% for field in definition.fields %}
+                {% if field.name in part.specs %}
+                <div><dt>{{ field.label }}</dt><dd>{{ part.specs[field.name] }}</dd></div>
+                {% endif %}
+            {% endfor %}
+            </dl>
+        </section>
+
+        <section class="detail-section">
+            <h2>KiCad mapping</h2>
+            <div class="mapping-grid">
+                <div class="mapping-card">
+                    <span class="mapping-icon" aria-hidden="true">S</span>
+                    <div><small>Symbol</small><strong class="mono">{{ part.kicad.symbol }}</strong></div>
+                </div>
+                <div class="mapping-card">
+                    <span class="mapping-icon" aria-hidden="true">F</span>
+                    <div><small>Footprint</small><strong class="mono">{{ part.kicad.footprint }}</strong></div>
+                </div>
+            </div>
+            {% if part.kicad.exclude_from_bom %}<p class="muted compact">Excluded from BOM</p>{% endif %}
+        </section>
+
+        {% if part.suppliers %}
+        <section class="detail-section">
+            <h2>Suppliers</h2>
+            <div class="supplier-list">
+            {% for supplier in part.suppliers %}
+                <div>
+                    <span>{{ supplier.name }}</span>
+                    {% if supplier.product_url %}<a class="mono" href="{{ supplier.product_url }}" target="_blank" rel="noreferrer">{{ supplier.sku }} ↗</a>{% else %}<span class="mono">{{ supplier.sku }}</span>{% endif %}
+                </div>
+            {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if part.keywords or part.notes %}
+        <section class="detail-section">
+            {% if part.keywords %}
+            <h2>Keywords</h2>
+            <p class="tags">{% for keyword in part.keywords %}<span>{{ keyword }}</span>{% endfor %}</p>
+            {% endif %}
+            {% if part.notes %}<h2>Notes</h2><p class="preserve-lines">{{ part.notes }}</p>{% endif %}
+        </section>
+        {% endif %}
+    </div>
+
+    <aside class="record-sidebar">
+        <div class="record-card">
+            <h2>Record</h2>
+            <dl>
+                <div><dt>ID</dt><dd class="mono">{{ part.id }}</dd></div>
+                <div><dt>Type</dt><dd>{{ definition.label }}</dd></div>
+            </dl>
+        </div>
+        <div class="danger-zone">
+            <strong>Delete component</strong>
+            <p>Removes working TOML record and rebuilds DBLib. Git history can recover it.</p>
+            <form method="post" action="/components/{{ part.component_type }}/{{ part.id }}/delete"
+                  onsubmit="return confirm('Delete {{ part.id }}? Git history can recover it, but the working file will be removed.')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button class="button danger" type="submit">Delete component</button>
+            </form>
+        </div>
+    </aside>
+</div>
+{% endblock %}

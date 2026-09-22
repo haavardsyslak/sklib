@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Not found · {{ workspace.name }}{% endblock %}
+{% block content %}
+<div class="empty-page">
+    <h1>Not found</h1>
+    <p>No component or type named <span class="mono">{{ value }}</span> exists.</p>
+    <a class="button primary" href="/components">Return to components</a>
+</div>
+{% endblock %}

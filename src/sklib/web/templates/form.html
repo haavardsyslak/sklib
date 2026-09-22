@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}Add{% endif %} {{ definition.label }} · {{ workspace.name }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{% if editing %}/components/{{ definition.name }}/{{ values.id }}{% else %}/components?component_type={{ definition.name }}{% endif %}">← {% if editing %}Back to component{% else %}Back to {{ definition.plural|lower }}{% endif %}</a>
+<section class="page-heading form-heading">
+    <div>
+        <p class="eyebrow">{{ definition.label }}</p>
+        <h1>{% if editing %}Edit component{% else %}Add component{% endif %}</h1>
+        <p class="muted">Required fields are marked with *.</p>
+    </div>
+</section>
+
+{% if errors %}
+<div class="notice error">
+    <strong>Could not save component.</strong>
+    <ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+<form id="component-form" class="part-form" method="post"
+      action="{% if editing %}/components/{{ definition.name }}/{{ values.id }}{% else %}/components{% endif %}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="component_type" value="{{ definition.name }}">
+
+    <fieldset>
+        <legend>Identity</legend>
+        <div class="field-grid">
+            <label>ID
+                <input name="id" value="{{ values.get('id', '') }}" required readonly>
+                <small>Generated locally; {{ definition.prefix }}-XXXXX-XXXXX</small>
+            </label>
+            <label>Manufacturer *
+                <input id="manufacturer" name="manufacturer" value="{{ values.get('manufacturer', '') }}" required>
+            </label>
+            <label>Manufacturer part number *
+                <span class="input-action">
+                    <input id="mpn" name="mpn" value="{{ values.get('mpn', '') }}" required>
+                    <button id="digikey-search" type="button">Search DigiKey</button>
+                </span>
+                <small id="digikey-status">Optional; requires credentials in .env.</small>
+            </label>
+            <div id="digikey-results" class="supplier-results wide" hidden></div>
+            <label>Manufacturer status *
+                <select id="manufacturer_status" name="manufacturer_status" required>
+                    {% for status in ['active', 'not_recommended', 'obsolete', 'unknown'] %}
+                    <option value="{{ status }}" {% if values.get('manufacturer_status') == status %}selected{% endif %}>{{ status|replace('_', ' ')|title }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="wide">Description *
+                <input id="description" name="description" value="{{ values.get('description', '') }}" required>
+            </label>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>{{ definition.label }} specifications</legend>
+        <div class="field-grid">
+        {% for field in definition.fields %}
+            <label>{{ field.label }}{% if field.required %} *{% endif %}
+                {% if field.kind == 'enum' %}
+                <select id="spec__{{ field.name }}" name="spec__{{ field.name }}" {% if field.required %}required{% endif %}>
+                    <option value="">Select…</option>
+                    {% for option in field.options %}
+                    <option value="{{ option }}" {% if values.get('spec__' ~ field.name) == option %}selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                </select>
+                {% elif field.kind == 'boolean' %}
+                <select id="spec__{{ field.name }}" name="spec__{{ field.name }}" {% if field.required %}required{% endif %}>
+                    <option value="">Select…</option>
+                    <option value="true" {% if values.get('spec__' ~ field.name) == 'True' %}selected{% endif %}>Yes</option>
+                    <option value="false" {% if values.get('spec__' ~ field.name) == 'False' %}selected{% endif %}>No</option>
+                </select>
+                {% else %}
+                <input id="spec__{{ field.name }}" name="spec__{{ field.name }}"
+                       value="{{ values.get('spec__' ~ field.name, '') }}"
+                       {% if field.kind in ['integer', 'number'] %}inputmode="decimal"{% endif %}
+                       {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
+                       {% if field.required %}required{% endif %}>
+                {% endif %}
+                {% if field.help %}<small>{{ field.help }}</small>{% endif %}
+            </label>
+        {% endfor %}
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>KiCad mapping</legend>
+        <div class="field-grid">
+            <label class="picker">Symbol *
+                <span class="picker-input">
+                    <span id="symbol-library" class="library-scope" hidden>
+                        <span></span><button type="button" aria-label="Clear symbol library filter">×</button>
+                    </span>
+                    <input id="symbol-search" value="{{ values.get('symbol', '') }}" autocomplete="off" placeholder="Search symbols or libraries…">
+                </span>
+                <input id="symbol" name="symbol" type="hidden" value="{{ values.get('symbol', '') }}">
+                <div id="symbol-results" class="picker-results" hidden></div>
+                <small>Select a library to filter. Use ↑/↓ or Ctrl+N/Ctrl+P.</small>
+            </label>
+            <label class="picker">Footprint *
+                <span class="picker-input">
+                    <span id="footprint-library" class="library-scope" hidden>
+                        <span></span><button type="button" aria-label="Clear footprint library filter">×</button>
+                    </span>
+                    <input id="footprint-search" value="{{ values.get('footprint', '') }}" autocomplete="off" placeholder="Search footprints or libraries…">
+                </span>
+                <input id="footprint" name="footprint" type="hidden" value="{{ values.get('footprint', '') }}">
+                <div id="footprint-results" class="picker-results" hidden></div>
+                <small>Select a library to filter. Use ↑/↓ or Ctrl+N/Ctrl+P.</small>
+            </label>
+            <label class="checkbox wide">
+                <input type="checkbox" name="exclude_from_bom" {% if values.get('exclude_from_bom') == 'on' %}checked{% endif %}>
+                Exclude from BOM
+            </label>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>References</legend>
+        <div class="field-grid">
+            <label class="wide">Datasheet
+                <input id="datasheet" name="datasheet" type="url" value="{{ values.get('datasheet', '') }}" placeholder="https://…">
+            </label>
+            <label class="wide">Keywords
+                <input id="keywords" name="keywords" value="{{ values.get('keywords', '') }}" placeholder="capacitor, mlcc, x7r">
+            </label>
+            <label class="wide">Notes
+                <textarea name="notes" rows="3">{{ values.get('notes', '') }}</textarea>
+            </label>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Preferred supplier</legend>
+        <p class="muted compact">Optional. Enter both supplier and SKU when used.</p>
+        <div class="field-grid">
+            <label>Supplier
+                <input id="supplier_name" name="supplier_name" value="{{ values.get('supplier_name', '') }}" placeholder="DigiKey">
+            </label>
+            <label>Supplier SKU
+                <input id="supplier_sku" name="supplier_sku" value="{{ values.get('supplier_sku', '') }}">
+            </label>
+            <label class="wide">Product URL
+                <input id="supplier_url" name="supplier_url" type="url" value="{{ values.get('supplier_url', '') }}">
+            </label>
+            <div id="digikey-stock" class="stock-information wide" hidden>
+                <strong>Current DigiKey availability</strong>
+                <span id="digikey-stock-value"></span>
+                <small>Live supplier data; not stored in component TOML.</small>
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="form-actions">
+        <a class="button" href="/components?component_type={{ definition.name }}">Cancel</a>
+        <button class="button primary" type="submit">{% if editing %}Save changes{% else %}Create component{% endif %}</button>
+    </div>
+</form>
+{% endblock %}
+{% block scripts %}<script type="module" src="/static/form.js?v={{ asset_version }}"></script>{% endblock %}

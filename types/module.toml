@@ -1,0 +1,50 @@
+schema_version = 1
+name = "module"
+label = "Module"
+plural = "Modules"
+prefix = "MOD"
+value_field = "mpn"
+
+[[fields]]
+name = "type"
+label = "Type"
+kind = "string"
+required = true
+placeholder = "Wireless"
+
+[[fields]]
+name = "function"
+label = "Function"
+kind = "string"
+required = true
+placeholder = "Wi-Fi and Bluetooth"
+
+[[fields]]
+name = "interfaces"
+label = "Interfaces"
+kind = "string"
+placeholder = "SDIO, UART, GPIO"
+
+[[fields]]
+name = "input_voltage"
+label = "Input voltage"
+kind = "string"
+placeholder = "3.0V to 3.6V"
+
+[[fields]]
+name = "output_voltage"
+label = "Output voltage"
+kind = "string"
+placeholder = "5V"
+
+[[fields]]
+name = "mounting_type"
+label = "Mounting type"
+kind = "string"
+placeholder = "SMD"
+
+[[fields]]
+name = "form_factor"
+label = "Form factor"
+kind = "string"
+placeholder = "M.2 2230"

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Components · {{ workspace.name }}{% endblock %}
+{% block content %}
+{% set selected_definition = component_types|selectattr('name', 'equalto', selected_type)|first if selected_type else none %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Component library</p>
+        <h1>{% if selected_definition %}{{ selected_definition.plural }}{% else %}All components{% endif %}</h1>
+        <p class="muted">{{ parts|length }} {% if query %}matching {% endif %}component{% if parts|length != 1 %}s{% endif %}</p>
+    </div>
+    <details class="add-menu">
+        <summary class="button primary">
+            <span aria-hidden="true">+</span> Add component
+            <span class="chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="menu-panel">
+            {% for item in component_types %}
+            <a href="/components/new?component_type={{ item.name }}">
+                <span class="type-mark" aria-hidden="true">{{ item.prefix[:2] }}</span>
+                <span>Add {{ item.label|lower }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </details>
+</section>
+
+{% if saved %}
+<div class="notice success" role="status">
+    <span class="notice-icon" aria-hidden="true">✓</span>
+    <div><strong>{{ saved }} saved</strong><br><span>DBLib rebuilt in {{ build_seconds }}s.</span></div>
+</div>
+{% endif %}
+
+{% if issues %}
+<div class="notice error" role="alert">
+    <span class="notice-icon" aria-hidden="true">!</span>
+    <div>
+        <strong>Catalog contains {{ issues|length }} validation error(s).</strong>
+        <ul>{% for issue in issues %}<li>{{ issue }}</li>{% endfor %}</ul>
+    </div>
+</div>
+{% endif %}
+
+<form class="list-toolbar" method="get" action="/components" role="search">
+    {% if selected_type %}<input type="hidden" name="component_type" value="{{ selected_type }}">{% endif %}
+    <div class="search-control">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg>
+        <label class="sr-only" for="q">Search current component list</label>
+        <input id="q" name="q" value="{{ query }}" placeholder="Search by ID, MPN, manufacturer, value…">
+    </div>
+    <button type="submit">Search</button>
+    {% if query %}
+    <a class="button quiet" href="/components{% if selected_type %}?component_type={{ selected_type }}{% endif %}">Clear</a>
+    {% endif %}
+</form>
+
+<div class="table-wrap">
+<table class="component-table">
+    <thead>
+        <tr>
+            <th>MPN / ID</th>
+            <th>Value</th>
+            <th>Manufacturer</th>
+            <th>Package</th>
+            <th>Status</th>
+            <th><span class="sr-only">Actions</span></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for part in parts %}
+        {% set definition = component_types|selectattr('name', 'equalto', part.component_type)|first %}
+        <tr>
+            <td>
+                <a class="part-link" href="/components/{{ part.component_type }}/{{ part.id }}">{{ part.mpn }}</a>
+                <span class="part-id mono">{{ part.id }}</span>
+            </td>
+            <td>{% if definition.value_field == 'mpn' %}{{ part.mpn }}{% else %}{{ part.specs.get(definition.value_field, '—') }}{% endif %}</td>
+            <td>{{ part.manufacturer }}</td>
+            <td>{{ part.specs.get('package', '—') }}</td>
+            <td><span class="status {{ part.manufacturer_status }}">{{ part.manufacturer_status|replace('_', ' ') }}</span></td>
+            <td class="row-action"><a href="/components/{{ part.component_type }}/{{ part.id }}/edit">Edit</a></td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="6" class="empty">
+                <div class="empty-icon" aria-hidden="true">⌕</div>
+                {% if query %}
+                <strong>No matching components</strong>
+                <span>Try another search or clear current query.</span>
+                <a href="/components{% if selected_type %}?component_type={{ selected_type }}{% endif %}">Clear search</a>
+                {% elif selected_definition %}
+                <strong>No {{ selected_definition.plural|lower }} yet</strong>
+                <span>Add first {{ selected_definition.label|lower }} to this library.</span>
+                <a href="/components/new?component_type={{ selected_definition.name }}">Add {{ selected_definition.label|lower }}</a>
+                {% else %}
+                <strong>Library is empty</strong>
+                <span>Add a component to begin building the catalog.</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

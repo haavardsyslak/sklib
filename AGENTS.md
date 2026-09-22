@@ -1,166 +1,122 @@
-# AGENTS.md - SKLib Development Guide
+# AGENTS.md - SKLib development guide
 
-SKLib is a Git-friendly KiCad DBLib parts library. Stores atomic parts as CSV files and generates a SQLite database for KiCad 7.0+. Includes a FastAPI web UI.
+SKLib is a Git-backed KiCad DBLib component-library framework. Canonical parts
+are per-part TOML files. Declarative TOML type definitions drive validation,
+web forms, and SQLite columns. SQLite DBLib files are generated artifacts.
 
-## Project Structure
-```
+## Project structure
+
+```text
 sklib/
-├── src/
-│   ├── parts/           # CSV part definitions (source of truth)
-│   │   ├── capacitors.csv, resistors.csv, connectors.csv
-│   ├── schema.json      # JSON Schema with component field definitions
-│   └── web/            # Web UI (FastAPI + Jinja2)
-│       ├── main.py     # FastAPI app entry point
-│       ├── csv_store.py # CSV read/write operations
-│       ├── schema.py   # Schema loading utilities
-│       └── routes/     # API routes
-├── scripts/
-│   ├── build_db.py     # CSV → SQLite generator
-│   └── validate.py     # Schema validation
-├── generated/          # Build artifacts (gitignored)
-│   └── sklib.db        # SQLite database for KiCad
-├── Makefile
-└── pyproject.toml
+├── parts/                  # Canonical part records
+├── types/                  # Declarative component-type definitions
+├── kicad/                  # Reviewed symbols, footprints, and 3D models
+├── generated/              # Local build artifacts, ignored
+├── src/sklib/
+│   ├── cli.py
+│   ├── config.py
+│   ├── models.py
+│   ├── type_definitions.py
+│   ├── store.py
+│   ├── build.py
+│   ├── kicad/
+│   ├── suppliers/
+│   └── web/
+├── tests/
+├── sklib.toml
+└── justfile                # Optional command shortcuts
 ```
 
-## Build/Lint/Test Commands
+## Commands
 
-### Make Targets
-```bash
-make install      # Install dependencies with uv
-make validate     # Validate CSV files against schema
-make build        # Generate SQLite database from CSVs
-make check        # Validate then build
-make clean        # Remove generated files
-make indexes      # Build KiCad symbol/footprint indexes
-make next-id category=capacitors  # Get next available ID
-make web          # Start web UI (http://127.0.0.1:8000)
+```console
+uv sync --locked
+uv run sklib doctor
+uv run sklib check
+uv run sklib build
+uv run sklib index
+uv run sklib web
+uv run pytest
+uv run ruff check .
+uv run ruff format --check .
+uv build
 ```
 
-### Direct Python Scripts
-```bash
-python scripts/validate.py src/parts/capacitors.csv
-python scripts/validate.py --next-id src/parts/capacitors.csv
-python scripts/build_db.py --output custom.db --no-dbl
+Optional equivalents:
+
+```console
+just install
+just check
+just web
 ```
 
-### Linting/Formatting (ruff)
-```bash
-ruff check .      # Lint all Python files
-ruff format .    # Format all Python files
-ruff check src/web/main.py  # Lint single file
+CLI commands are canonical because `just` is optional and must not be required
+on Windows.
+
+## Architectural rules
+
+- TOML under `parts/` is sole component-data source.
+- Pydantic models define stable record structure.
+- `types/*.toml` defines type-specific specification fields.
+- Never add CSV compatibility or a second authoring database.
+- Never update generated SQLite incrementally; rebuild from canonical records.
+- Never commit `generated/`, `.sklib/`, credentials, API dumps, price, or stock.
+- Keep supplier results advisory and require human review.
+- Use `Workspace` for paths; do not depend on current working directory.
+- Use atomic replacement for TOML and DBLib config writes.
+- Build SQLite in temporary file, then publish through SQLite backup into stable
+  database file so KiCad's open ODBC connection sees changes.
+- Keep implementation explicit; avoid plugin systems and abstraction layers
+  without demonstrated need.
+
+## Code style
+
+- Python 3.13+
+- 88-character lines
+- Four spaces, no tabs
+- Type hints for every function parameter and return
+- Imports ordered as standard library, third party, local
+- `snake_case` functions and variables
+- `PascalCase` classes
+- `SCREAMING_SNAKE_CASE` constants
+- Google-style docstrings where documentation is useful
+- No comments unless explicitly required
+- `Path` for paths
+- UTF-8 and explicit newline behavior for file operations
+- User-facing failures need actionable messages
+
+## Testing
+
+- Unit tests for models and type definitions
+- Filesystem tests use pytest `tmp_path`
+- Web tests use FastAPI `TestClient` and temporary workspaces
+- Supplier tests use sanitized fixtures and never call live APIs
+- KiCad parser tests use tiny fixture libraries
+- Test behavior and generated SQLite contents, not implementation details
+- Keep tests independent of installed KiCad and ODBC drivers
+- Run full baseline before finishing:
+
+```console
+uv run ruff check .
+uv run ruff format --check .
+uv run pytest
+uv run sklib check
+uv run sklib build
+uv build
 ```
 
-### Testing (pytest)
-```bash
-pytest                        # Run all tests
-pytest tests/test_csv.py      # Run single test file
-pytest -v                     # Verbose output
-pytest -k "test_name"         # Run tests matching pattern
+Cross-platform CI must cover Ubuntu, macOS, and Windows. Actual KiCad/ODBC
+integration remains a documented manual smoke test on each operating system.
+
+## Canonical part layout
+
+```text
+parts/<component_type>/<ID>.toml
 ```
 
-## Code Style Guidelines
+New IDs use the matching type prefix plus two groups of five random Crockford
+Base32 characters; legacy numeric IDs remain valid. Filename must equal ID.
+Parent directory must equal component type. Manufacturer and MPN pairs are
+unique case-insensitively.
 
-### General
-- Python 3.13+, **88 char line length**, **4 spaces** (no tabs)
-- **Always use type hints** for function parameters and returns
-- **No comments** unless explicitly required
-
-### Imports (order: stdlib → third-party → local)
-```python
-import argparse
-import csv
-import json
-import sys
-from pathlib import Path
-```
-
-### Naming Conventions
-| Type | Convention | Example |
-|------|------------|---------|
-| Functions/variables | `snake_case` | `load_schema`, `csv_path` |
-| Constants | `SCREAMING_SNAKE_CASE` | `PARTS_DIR` |
-| Classes | `PascalCase` | `Component`, `CSVStore` |
-| Modules | `snake_case` | `csv_store.py` |
-
-### Docstrings (Google-style)
-```python
-def validate_csv(csv_path: Path, schema: dict) -> tuple[list[str], list[str], int]:
-    """
-    Validate a CSV file against the schema.
-
-    Args:
-        csv_path: Path to the CSV file to validate
-        schema: Loaded schema dictionary
-
-    Returns:
-        Tuple of (errors, warnings, row_count)
-    """
-```
-
-### FastAPI Routes Pattern
-```python
-from fastapi import APIRouter, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
-
-router = APIRouter()
-
-@router.get("/", response_class=HTMLResponse)
-def list_components(request: Request, component_type: str | None = None):
-    env = request.app.state.jinja_env
-    template = env.get_template("components/list.html")
-    return template.render(request=request, components=components)
-```
-
-### File Operations
-```python
-with open(csv_path, newline="", encoding="utf-8") as f:
-    reader = csv.DictReader(f)
-    if reader.fieldnames is None:  # Check for empty files
-        return []
-```
-- Always use `encoding="utf-8"` and `newline=""`
-- Use `Path` for all file paths
-
-### Error Handling
-```python
-# Scripts: return 1 on error, 0 on success
-if error:
-    print(f"Error: {message}", file=sys.stderr)
-    return 1
-
-# File operations: wrap in try/except for user-facing errors
-try:
-    with open(path) as f:
-        return json.load(f)
-except Exception as e:
-    errors.append(f"Failed to read file: {e}")
-```
-
-## CSV Data Format
-
-### Base Columns
-`id`, `component_type`, `mpn`, `manufacturer`, `description`, `symbol`, `footprint`, `lifecycle_status`
-
-### ID Patterns
-- Pattern: `^[A-Z]{2,4}-\d{4,}$` (e.g., `CAP-0001`, `RES-0042`)
-- Status: `active`, `deprecated`, or `obsolete`
-- Symbol/footprint: `Library:Name` format
-
-### ID Prefixes
-| Category | Prefix | Example |
-|----------|--------|---------|
-| capacitors | CAP | CAP-0001 |
-| resistors | RES | RES-0001 |
-| inductors | IND | IND-0001 |
-| diodes | DIO | DIO-0001 |
-| connectors | CON | CON-0001 |
-
-## Key Files
-- `src/schema/`: Schema definitions (split into multiple files)
-  - `src/schema/base.json`: Column definitions, ID prefixes, common symbols/footprints
-  - `src/schema/types/*.json`: Component type-specific fields
-- `src/supplier/mappings/digikey.json`: DigiKey API field mappings
-- `src/supplier/component_mapper.py`: Base mapper interface for supplier APIs
-- `src/web/main.py`: FastAPI application
-- `src/web/csv_store.py`: CSV read/write with `Component` dataclass
+See `docs/data-format.md` and `docs/design.md` before changing data structures.

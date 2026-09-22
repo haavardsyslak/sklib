@@ -1,0 +1,51 @@
+schema_version = 1
+name = "capacitor"
+label = "Capacitor"
+plural = "Capacitors"
+prefix = "CAP"
+value_field = "capacitance"
+default_symbol = "Device:C_Small"
+
+[[fields]]
+name = "capacitance"
+label = "Capacitance"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(pF|nF|uF|mF|F)$'
+placeholder = "100nF"
+help = "Explicit ASCII unit such as 10pF, 4.7nF, or 2.2uF"
+
+[[fields]]
+name = "tolerance"
+label = "Tolerance"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?%$'
+placeholder = "10%"
+
+[[fields]]
+name = "rated_voltage"
+label = "Rated voltage"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(mV|V|kV)$'
+placeholder = "50V"
+
+[[fields]]
+name = "type"
+label = "Type"
+kind = "string"
+required = true
+placeholder = "Ceramic"
+
+[[fields]]
+name = "dielectric"
+label = "Dielectric"
+kind = "string"
+placeholder = "X7R"
+
+[[fields]]
+name = "package"
+label = "Package"
+kind = "string"
+placeholder = "0402"

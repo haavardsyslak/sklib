@@ -1,0 +1,13 @@
+schema_version = 1
+name = "misc"
+label = "Miscellaneous"
+plural = "Miscellaneous"
+prefix = "MISC"
+value_field = "mpn"
+
+[[fields]]
+name = "type"
+label = "Type"
+kind = "string"
+placeholder = "Temporary classification"
+help = "Move the part to a specific component type when its schema is available"

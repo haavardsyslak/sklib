@@ -1,0 +1,59 @@
+schema_version = 1
+name = "memory"
+label = "Memory"
+plural = "Memory"
+prefix = "MEM"
+value_field = "mpn"
+
+[[fields]]
+name = "type"
+label = "Type"
+kind = "string"
+required = true
+placeholder = "NOR Flash"
+
+[[fields]]
+name = "capacity"
+label = "Capacity"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(bit|Kbit|Mbit|Gbit|Tbit|B|KB|MB|GB|TB)$'
+placeholder = "128Mbit"
+help = "Always include bit or B; do not use ambiguous values such as 128M"
+
+[[fields]]
+name = "interface"
+label = "Interface"
+kind = "string"
+required = true
+placeholder = "QSPI"
+
+[[fields]]
+name = "organization"
+label = "Organization"
+kind = "string"
+placeholder = "16M x 8"
+
+[[fields]]
+name = "supply_voltage"
+label = "Supply voltage"
+kind = "string"
+placeholder = "2.7V to 3.6V"
+
+[[fields]]
+name = "speed"
+label = "Speed"
+kind = "string"
+placeholder = "133MHz"
+
+[[fields]]
+name = "bus_width"
+label = "Bus width"
+kind = "integer"
+placeholder = "8"
+
+[[fields]]
+name = "package"
+label = "Package"
+kind = "string"
+placeholder = "SOIC-8"

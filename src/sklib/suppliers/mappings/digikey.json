@@ -1,0 +1,48 @@
+{
+  "base": {
+    "mpn": ["ManufacturerProductNumber"],
+    "manufacturer": ["Manufacturer.Name"],
+    "description": ["Description.ProductDescription", "Description.DetailedDescription"],
+    "manufacturer_status": ["ProductStatus.Status"]
+  },
+  "lifecycle_map": {
+    "Active": "active",
+    "Not For New Designs": "not_recommended",
+    "Obsolete": "obsolete",
+    "End Of Life": "obsolete",
+    "Discontinued": "obsolete"
+  },
+  "category_map": {
+    "Capacitors": "capacitor",
+    "Resistors": "resistor",
+    "Inductors, Coils, Chokes": "inductor",
+    "Inductors": "inductor"
+  },
+  "general": {
+    "package": ["Parameters:Package / Case", "Parameters:Case Package"],
+    "rated_voltage": ["Parameters:Voltage - Rated", "Parameters:Voltage Rated"],
+    "tolerance": ["Parameters:Tolerance"],
+    "operating_temperature": ["Parameters:Operating Temperature"]
+  },
+  "parameters": {
+    "capacitor": {
+      "capacitance": ["Parameters:Capacitance"],
+      "dielectric": ["Parameters:Temperature Coefficient", "Parameters:Dielectric"],
+      "esr": ["Parameters:ESR (Equivalent Series Resistance)", "Parameters:ESR"]
+    },
+    "resistor": {
+      "resistance": ["Parameters:Resistance"],
+      "power_rating": ["Parameters:Power (Watts)", "Parameters:Power Rating"],
+      "temperature_coefficient": ["Parameters:Temperature Coefficient"],
+      "composition": ["Parameters:Composition", "Parameters:Technology"]
+    },
+    "inductor": {
+      "inductance": ["Parameters:Inductance"],
+      "rated_current": ["Parameters:Current Rating (Amps)", "Parameters:Current Rating"],
+      "saturation_current": ["Parameters:Current - Saturation (Isat)"],
+      "dcr": ["Parameters:DC Resistance (DCR)"],
+      "self_resonant_frequency": ["Parameters:Frequency - Self Resonant"],
+      "shielding": ["Parameters:Shielding"]
+    }
+  }
+}

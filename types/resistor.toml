@@ -1,0 +1,52 @@
+schema_version = 1
+name = "resistor"
+label = "Resistor"
+plural = "Resistors"
+prefix = "RES"
+value_field = "resistance"
+default_symbol = "Device:R_Small"
+
+[[fields]]
+name = "resistance"
+label = "Resistance"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(u|m|R|k|Meg|G)[0-9]*$'
+placeholder = "10k"
+help = "ASCII notation such as 10m, 1R, 4R7, 2k2, or 10Meg"
+
+[[fields]]
+name = "tolerance"
+label = "Tolerance"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?%$'
+placeholder = "1%"
+
+[[fields]]
+name = "power_rating"
+label = "Power rating"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(mW|W|kW)$'
+placeholder = "250mW"
+
+[[fields]]
+name = "rated_voltage"
+label = "Rated voltage"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(mV|V|kV)$'
+placeholder = "50V"
+
+[[fields]]
+name = "temperature_coefficient"
+label = "Temperature coefficient"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?ppm/K$'
+placeholder = "100ppm/K"
+
+[[fields]]
+name = "package"
+label = "Package"
+kind = "string"
+placeholder = "0402"

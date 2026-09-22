@@ -1,0 +1,55 @@
+schema_version = 1
+name = "led"
+label = "LED"
+plural = "LEDs"
+prefix = "LED"
+value_field = "mpn"
+
+[[fields]]
+name = "color"
+label = "Color"
+kind = "string"
+required = true
+placeholder = "Red"
+
+[[fields]]
+name = "continuous_forward_current"
+label = "Continuous forward current"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(uA|mA|A)$'
+placeholder = "20mA"
+help = "Maximum continuous rating; not pulse or test current"
+
+[[fields]]
+name = "configuration"
+label = "Configuration"
+kind = "string"
+placeholder = "Single"
+
+[[fields]]
+name = "peak_wavelength"
+label = "Peak wavelength"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(nm|um)$'
+placeholder = "625nm"
+
+[[fields]]
+name = "color_temperature"
+label = "Color temperature"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)K$'
+placeholder = "4000K"
+
+[[fields]]
+name = "viewing_angle"
+label = "Viewing angle"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?deg$'
+placeholder = "120deg"
+
+[[fields]]
+name = "package"
+label = "Package"
+kind = "string"
+placeholder = "0603"

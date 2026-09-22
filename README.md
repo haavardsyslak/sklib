@@ -1,189 +1,174 @@
-# SKLib - KiCad Parts Library
+# SKLib
 
-A Git-friendly KiCad DBLib parts library with CSV source files and SQLite database generation.
+Git-backed KiCad DBLib component library with a local web editor.
 
-## Overview
-
-This library stores **atomic parts** - each entry corresponds to a fully specified manufacturer part number (MPN) with mapped symbols, footprints, and metadata. It reuses KiCad's standard symbol and footprint libraries.
-
-## Project Structure
-
-```
-sklib/
-├── src/
-│   ├── parts/           # CSV part definitions (source of truth)
-│   │   ├── capacitors.csv
-│   │   └── resistors.csv
-│   └── schema.json      # Validation schema
-├── generated/           # Build artifacts (gitignored)
-│   └── sklib.db         # SQLite database for KiCad
-├── kicad/
-│   └── sklib.kicad_dbl  # KiCad database library config
-├── scripts/
-│   ├── build_db.py      # CSV → SQLite generator
-│   └── validate.py      # Schema validation
-└── Makefile
-```
+SKLib stores one atomic manufacturer part per TOML file. It validates the
+catalog and builds a SQLite database for KiCad. Included component types are
+capacitors, connectors, inductors, and resistors.
 
 ## Requirements
 
-- Python 3.10+
-- KiCad 7.0+ (for DBLib support)
-- SQLite3 ODBC driver
+- Python 3.13+
+- [uv](https://docs.astral.sh/uv/)
+- KiCad 10 or newer
+- SQLite ODBC driver for KiCad DBLib use
 
-### Installing SQLite ODBC Driver
+Development and editing work on Linux, macOS, and Windows. `just` is optional.
 
-**Ubuntu/Debian:**
-```bash
-sudo apt install libsqliteodbc
+## Setup
+
+```console
+uv sync
+uv run sklib doctor
+uv run sklib check
+uv run sklib build
+uv run sklib web
 ```
 
-**Fedora:**
-```bash
-sudo dnf install sqliteodbc
+Open <http://127.0.0.1:8000>. The web editor works without internet access.
+DigiKey lookup is optional.
+
+Equivalent optional shortcuts:
+
+```console
+just install
+just check
+just web
 ```
 
-**macOS:**
-```bash
-brew install sqliteodbc
+## Component workflow
+
+1. Pull latest Git revision.
+2. Start `uv run sklib web`.
+3. Search for existing manufacturer part number.
+4. Add component manually or fetch DigiKey suggestions.
+5. Review metadata and select KiCad symbol and footprint.
+6. Save and verify generated DBLib.
+7. Review changed TOML file with `git diff`.
+8. Commit and open pull request.
+
+Canonical records live at:
+
+```text
+parts/<component_type>/<ID>.toml
 ```
 
-**Windows:**
-Download from http://www.ch-werner.de/sqliteodbc/
+New IDs use locally generated Crockford Base32 values such as
+`RES-7K3MP-9QWX2`, so contributors do not coordinate sequence numbers. Legacy
+numeric IDs remain valid.
 
-## Quick Start
+Generated files live under `generated/` and are ignored by Git.
 
-```bash
-# Validate CSV files
-make validate
+## Commands
 
-# Build SQLite database
-make build
-
-# Or both in one step
-make check
+```console
+uv run sklib check
+uv run sklib build
+uv run sklib doctor
+uv run sklib index
+uv run sklib new-id capacitor
+uv run sklib web
 ```
 
-## KiCad Setup
+Use another workspace from any directory:
 
-1. Build the database: `make build`
-2. In KiCad, go to **Preferences → Manage Symbol Libraries**
-3. Click the **Database Libraries** tab
-4. Add the library: browse to `kicad/sklib.kicad_dbl`
-5. Parts will appear in the symbol chooser under "SKLib Parts"
-
-> **Note:** The `.kicad_dbl` uses a relative path (`${KIPRJMOD}/../generated/sklib.db`). 
-> For this to work, your KiCad project should be in a sibling directory to `sklib/`, 
-> or adjust the path in `sklib.kicad_dbl`.
-
-## Adding Parts
-
-### 1. Find the next available ID
-
-```bash
-make next-id category=capacitors
-# Output: CAP-0004
+```console
+uv run sklib --workspace /path/to/library check
 ```
 
-### 2. Edit the CSV file
+Create a new library after SKLib is published or installed:
 
-Add a new row to `src/parts/capacitors.csv`:
-
-```csv
-CAP-0004,GRM188R71H103KA01D,Murata,MLCC 10nF 50V X7R 0603,10nF,0603,Device:C,Capacitor_SMD:C_0603_1608Metric,https://...,capacitor mlcc,active,0
+```console
+uvx sklib init my-library
 ```
 
-### 3. Validate and build
+## Component types
 
-```bash
-make check
+Type definitions are declarative TOML files under `types/`. They drive
+validation, forms, ID prefixes, and generated SQLite columns. Adding a normal
+field does not require Python changes.
+
+```toml
+schema_version = 1
+name = "capacitor"
+label = "Capacitor"
+plural = "Capacitors"
+prefix = "CAP"
+value_field = "capacitance"
+default_symbol = "Device:C_Small"
+
+[[fields]]
+name = "capacitance"
+label = "Capacitance"
+kind = "string"
+required = true
 ```
 
-### 4. Commit changes
+Supported field kinds are `string`, `integer`, `number`, `boolean`, and `enum`.
 
-```bash
-git add src/parts/capacitors.csv
-git commit -m "Add 10nF 50V 0603 MLCC (GRM188R71H103KA01D)"
+## DigiKey
+
+Create an ignored `.env` file in the workspace:
+
+```dotenv
+DIGIKEY_CLIENT_ID=...
+DIGIKEY_CLIENT_SECRET=...
 ```
 
-## CSV Schema
+Missing credentials only disable searches; normal editing remains available.
+Current stock, MOQ, and packaging are shown during selection but are not stored
+in canonical TOML.
 
-| Column | Required | Description |
-|--------|----------|-------------|
-| `id` | Yes | Unique ID (`PREFIX-NNNN` format) |
-| `mpn` | Yes | Manufacturer Part Number |
-| `manufacturer` | Yes | Manufacturer name |
-| `description` | Yes | Human-readable description |
-| `value` | No | Component value (e.g., 100nF, 10K) |
-| `package` | No | Package size (e.g., 0402, 0603) |
-| `symbol` | Yes | KiCad symbol (`Library:Symbol`) |
-| `footprint` | Yes | KiCad footprint (`Library:Footprint`) |
-| `datasheet` | No | URL to datasheet |
-| `keywords` | No | Space-separated search terms |
-| `status` | Yes | `active`, `deprecated`, or `obsolete` |
-| `exclude_from_bom` | No | `0` (default) or `1` to exclude from BOM |
+## Add library to KiCad
 
-The `description` and `keywords` columns map to KiCad's built-in symbol properties, enabling search in the Symbol Chooser.
+1. Install a SQLite ODBC driver.
+2. Build library:
 
-## ID Prefixes
+   ```console
+   uv run sklib build
+   ```
 
-| Category | Prefix | Example |
-|----------|--------|---------|
-| Capacitors | CAP | CAP-0001 |
-| Resistors | RES | RES-0001 |
-| Inductors | IND | IND-0001 |
-| Diodes | DIO | DIO-0001 |
-| Transistors | TRN | TRN-0001 |
-| ICs (Analog) | ICA | ICA-0001 |
-| ICs (Digital) | ICD | ICD-0001 |
-| Connectors | CON | CON-0001 |
-| Crystals | XTL | XTL-0001 |
-| LEDs | LED | LED-0001 |
+3. Open KiCad.
+4. Select **Preferences → Manage Symbol Libraries**.
+5. Open **Database Libraries** tab.
+6. Click **Add existing library** and select:
 
-## Common Symbol/Footprint Mappings
+   ```text
+   <workspace>/generated/sklib.kicad_dbl
+   ```
 
-### Capacitors
-| Package | Footprint |
-|---------|-----------|
-| 0402 | `Capacitor_SMD:C_0402_1005Metric` |
-| 0603 | `Capacitor_SMD:C_0603_1608Metric` |
-| 0805 | `Capacitor_SMD:C_0805_2012Metric` |
-| 1206 | `Capacitor_SMD:C_1206_3216Metric` |
+7. Click **OK**. Parts now appear in symbol chooser under library type names.
 
-Symbol: `Device:C` (or `Device:C_Polarized` for electrolytics)
+The chooser can find parts by SKLib ID, exact MPN, punctuation-free MPN,
+manufacturer, or canonical keywords. MPN remains a chooser column but does not
+need to be visible for keyword search.
 
-### Resistors
-| Package | Footprint |
-|---------|-----------|
-| 0402 | `Resistor_SMD:R_0402_1005Metric` |
-| 0603 | `Resistor_SMD:R_0603_1608Metric` |
-| 0805 | `Resistor_SMD:R_0805_2012Metric` |
-| 1206 | `Resistor_SMD:R_1206_3216Metric` |
+If KiCad reports missing ODBC driver, set driver name in ignored `.env`, rebuild,
+and add library again:
 
-Symbol: `Device:R`
+```dotenv
+SKLIB_ODBC_DRIVER=SQLite3 ODBC Driver
+```
 
-## Make Targets
+Run `uv run sklib doctor` to inspect selected paths and driver. Rebuild after
+moving workspace because generated DBLib contains absolute database path.
 
-| Command | Description |
-|---------|-------------|
-| `make validate` | Check CSV files against schema |
-| `make build` | Generate SQLite database |
-| `make clean` | Remove generated files |
-| `make next-id category=X` | Get next available ID |
-| `make check` | Validate and build |
-| `make help` | Show available targets |
+## Development checks
 
-## Troubleshooting
+```console
+uv run ruff check .
+uv run ruff format --check .
+uv run pytest
+uv run sklib check
+uv run sklib build
+uv build
+uv run python scripts/smoke_workspace.py
+```
 
-### "Database not found" in KiCad
-- Ensure you've run `make build`
-- Check the path in `sklib.kicad_dbl` matches your setup
+Consumer smoke test builds a disposable library from installed wheel. Pass
+`--workspace PATH` to keep it for manual inspection.
 
-### "ODBC driver not found"
-- Install the SQLite ODBC driver (see Requirements)
-- On Linux, you may need to configure `/etc/odbcinst.ini`
-
-### Validation errors
-- Check the error message for file and line number
-- Ensure symbol/footprint use `Library:Name` format
-- Verify ID format matches `PREFIX-NNNN`
+See [`docs/design.md`](docs/design.md) for architectural rules,
+[`docs/data-format.md`](docs/data-format.md) for canonical records, and
+[`docs/manual-testing.md`](docs/manual-testing.md) for human verification.
+Contributions follow [`CONTRIBUTING.md`](CONTRIBUTING.md).

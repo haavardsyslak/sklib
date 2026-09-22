@@ -1,0 +1,58 @@
+schema_version = 1
+name = "crystal"
+label = "Crystal"
+plural = "Crystals"
+prefix = "XTL"
+value_field = "frequency"
+default_symbol = "Device:Crystal"
+
+[[fields]]
+name = "frequency"
+label = "Frequency"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(Hz|kHz|MHz|GHz)$'
+placeholder = "16MHz"
+
+[[fields]]
+name = "load_capacitance"
+label = "Load capacitance"
+kind = "string"
+required = true
+pattern = '^(Series|(0|[1-9][0-9]*)(\.[0-9]+)?(pF|nF))$'
+placeholder = "10pF"
+help = "Use Series for a series-resonant crystal"
+
+[[fields]]
+name = "frequency_tolerance"
+label = "Frequency tolerance"
+kind = "string"
+required = true
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?ppm$'
+placeholder = "10ppm"
+
+[[fields]]
+name = "esr"
+label = "ESR"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(u|m|R|k|Meg|G)[0-9]*$'
+placeholder = "60R"
+
+[[fields]]
+name = "drive_level"
+label = "Drive level"
+kind = "string"
+pattern = '^(0|[1-9][0-9]*)(\.[0-9]+)?(uW|mW|W)$'
+placeholder = "100uW"
+
+[[fields]]
+name = "resonance_mode"
+label = "Resonance mode"
+kind = "string"
+placeholder = "Fundamental"
+
+[[fields]]
+name = "package"
+label = "Package"
+kind = "string"
+placeholder = "3225"

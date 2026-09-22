@@ -1,4 +1,0 @@
-id,mpn,manufacturer,description,value,package,symbol,footprint,datasheet,keywords,status,exclude_from_bom
-RES-0001,RC0402FR-0710KL,Yageo,Chip Resistor 10K 1% 0402,10K,0402,Device:R,Resistor_SMD:R_0402_1005Metric,https://www.yageo.com/upload/media/product/productsearch/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf,resistor thick film,active,0
-RES-0002,RC0402FR-07100RL,Yageo,Chip Resistor 100R 1% 0402,100R,0402,Device:R,Resistor_SMD:R_0402_1005Metric,https://www.yageo.com/upload/media/product/productsearch/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf,resistor thick film,active,0
-RES-0003,ERJ-2RKF1001X,Panasonic,Chip Resistor 1K 1% 0402,1K,0402,Device:R,Resistor_SMD:R_0402_1005Metric,https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf,resistor thick film,active,0

@@ -1,0 +1,57 @@
+schema_version = 1
+name = "interface"
+label = "Interface"
+plural = "Interfaces"
+prefix = "IFC"
+value_field = "mpn"
+
+[[fields]]
+name = "type"
+label = "Type"
+kind = "string"
+required = true
+placeholder = "Transceiver"
+
+[[fields]]
+name = "interface"
+label = "Interface"
+kind = "string"
+required = true
+placeholder = "CAN"
+
+[[fields]]
+name = "channels"
+label = "Channels"
+kind = "integer"
+placeholder = "2"
+
+[[fields]]
+name = "ports"
+label = "Ports"
+kind = "integer"
+placeholder = "1"
+
+[[fields]]
+name = "data_rate"
+label = "Data rate"
+kind = "string"
+placeholder = "5Mbps"
+help = "Protocol-appropriate value using bps, baud, sps, or frequency"
+
+[[fields]]
+name = "supply_voltage"
+label = "Supply voltage"
+kind = "string"
+placeholder = "3V to 5.5V"
+
+[[fields]]
+name = "resolution"
+label = "Resolution"
+kind = "string"
+placeholder = "16bit"
+
+[[fields]]
+name = "package"
+label = "Package"
+kind = "string"
+placeholder = "SOIC-16"

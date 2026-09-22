@@ -1,26 +1,48 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "sklib"
-version = "0.2.0"
-description = "KiCad DBLib parts library with web UI"
+version = "0.3.0"
+description = "Git-backed KiCad component library with a local web editor"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.115.0",
-    "uvicorn[standard]>=0.30.0",
     "jinja2>=3.1.0",
     "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
     "python-multipart>=0.0.9",
     "requests>=2.33.0",
+    "tomlkit>=0.13.0",
+    "uvicorn[standard]>=0.30.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "python-lsp-server>=1.12.0",
-    "ruff>=0.8.0",
-    "pytest>=8.0.0",
-]
+[project.scripts]
+sklib = "sklib.cli:main"
 
 [dependency-groups]
 dev = [
     "httpx>=0.28.1",
+    "pytest>=8.0.0",
+    "ruff>=0.8.0",
 ]
+
+[tool.setuptools.package-data]
+sklib = [
+    "templates/workspace/*",
+    "templates/workspace/types/*.toml",
+    "suppliers/mappings/*.json",
+    "web/static/*",
+    "web/templates/*.html",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

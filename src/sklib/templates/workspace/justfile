@@ -1,0 +1,17 @@
+default:
+    @just --list
+
+install:
+    uv sync
+
+web:
+    uv run sklib web
+
+check:
+    uv run sklib check
+
+build:
+    uv run sklib build
+
+index:
+    uv run sklib index

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}{{ workspace.name }}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/app.css?v={{ asset_version }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+<header class="topbar">
+    <button class="nav-toggle" type="button" aria-controls="sidebar" aria-expanded="false">
+        <span aria-hidden="true">☰</span>
+        <span class="sr-only">Toggle component navigation</span>
+    </button>
+    <a class="brand" href="/components">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="7" y="7" width="18" height="18" rx="2"></rect>
+            <path d="M11 1v6M16 1v6M21 1v6M11 25v6M16 25v6M21 25v6M1 11h6M1 16h6M1 21h6M25 11h6M25 16h6M25 21h6"></path>
+        </svg>
+        <span>
+            <strong>{{ workspace.name }}</strong>
+            <small>Git-backed KiCad component library</small>
+        </span>
+    </a>
+    <form class="global-search" method="get" action="/components" role="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg>
+        <label class="sr-only" for="global-q">Search all components</label>
+        <input id="global-q" name="q" value="{{ query }}" placeholder="Search all components…">
+    </form>
+    <span class="library-summary"><strong>{{ total_count }}</strong> components</span>
+</header>
+
+<div class="app-shell">
+    <aside id="sidebar" class="sidebar">
+        <nav aria-label="Component types">
+            <a class="sidebar-link all-components{% if not selected_type %} active{% endif %}"
+               href="/components" {% if not selected_type %}aria-current="page"{% endif %}>
+                <span class="nav-icon" aria-hidden="true">⌘</span>
+                <span>All components</span>
+                <span class="count">{{ total_count }}</span>
+            </a>
+            <p class="sidebar-heading">Component types</p>
+            <div class="type-links">
+                {% for item in component_types %}
+                <a class="sidebar-link{% if item.name == selected_type %} active{% endif %}"
+                   href="/components?component_type={{ item.name }}"
+                   {% if item.name == selected_type %}aria-current="page"{% endif %}>
+                    <span class="type-mark" aria-hidden="true">{{ item.prefix[:2] }}</span>
+                    <span>{{ item.plural }}</span>
+                    <span class="count">{{ component_counts.get(item.name, 0) }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </nav>
+    </aside>
+
+    <main class="app-main">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+<script type="module" src="/static/app.js?v={{ asset_version }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
