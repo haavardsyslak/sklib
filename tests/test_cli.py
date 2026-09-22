@@ -26,6 +26,30 @@ def test_new_id_command(
     )
 
 
+def test_index_command_enables_progress(
+    workspace: Workspace,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    progress_flags: list[bool] = []
+
+    def fake_loader(
+        loaded_workspace: Workspace, *, show_progress: bool = False
+    ) -> list[object]:
+        assert loaded_workspace == workspace
+        progress_flags.append(show_progress)
+        return []
+
+    monkeypatch.setattr("sklib.kicad.index.load_symbols", fake_loader)
+    monkeypatch.setattr("sklib.kicad.index.load_footprints", fake_loader)
+
+    result = main(["--workspace", str(workspace.root), "index"])
+
+    assert result == 0
+    assert progress_flags == [True, True]
+    assert "Indexed 0 symbols and 0 footprints" in capsys.readouterr().out
+
+
 def test_init_creates_portable_workspace(tmp_path: Path) -> None:
     destination = tmp_path / "library with spaces"
 

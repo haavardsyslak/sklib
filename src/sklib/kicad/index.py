@@ -1,8 +1,10 @@
 import json
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+
+from tqdm import tqdm
 
 from sklib.config import Workspace
 from sklib.kicad.paths import detect_system_paths
@@ -22,32 +24,39 @@ class LibraryEntry:
         return f"{self.library}:{self.name}"
 
 
-def load_symbols(workspace: Workspace) -> list[LibraryEntry]:
+def load_symbols(
+    workspace: Workspace, *, show_progress: bool = False
+) -> list[LibraryEntry]:
     system = detect_system_paths().symbols
     entries = _load_system_cache(
         workspace.cache_dir / "symbols.json",
         system,
         _scan_symbol_directory,
+        show_progress,
     )
-    entries.extend(_scan_repo_symbols(workspace.kicad_dir))
+    entries.extend(_scan_repo_symbols(workspace.kicad_dir, show_progress))
     return _deduplicate(entries)
 
 
-def load_footprints(workspace: Workspace) -> list[LibraryEntry]:
+def load_footprints(
+    workspace: Workspace, *, show_progress: bool = False
+) -> list[LibraryEntry]:
     system = detect_system_paths().footprints
     entries = _load_system_cache(
         workspace.cache_dir / "footprints.json",
         system,
         _scan_footprint_directory,
+        show_progress,
     )
-    entries.extend(_scan_repo_footprints(workspace.kicad_dir))
+    entries.extend(_scan_repo_footprints(workspace.kicad_dir, show_progress))
     return _deduplicate(entries)
 
 
 def _load_system_cache(
     cache_path: Path,
     directory: Path | None,
-    scanner: Callable[[Path, str], list[LibraryEntry]],
+    scanner: Callable[[Path, str, bool], list[LibraryEntry]],
+    show_progress: bool,
 ) -> list[LibraryEntry]:
     if directory is None:
         return []
@@ -63,7 +72,7 @@ def _load_system_cache(
         except (OSError, json.JSONDecodeError, TypeError):
             pass
 
-    entries = scanner(directory, "system")
+    entries = scanner(directory, "system", show_progress)
     cache_path.parent.mkdir(parents=True, exist_ok=True)
     cache_path.write_text(
         json.dumps(
@@ -78,34 +87,50 @@ def _load_system_cache(
     return entries
 
 
-def _scan_repo_symbols(directory: Path) -> list[LibraryEntry]:
+def _scan_repo_symbols(directory: Path, show_progress: bool) -> list[LibraryEntry]:
     entries: list[LibraryEntry] = []
     if directory.is_dir():
-        for path in sorted(directory.rglob("*.kicad_sym")):
+        paths = sorted(directory.rglob("*.kicad_sym"))
+        for path in _progress(paths, "Indexing repository symbols", show_progress):
             entries.extend(_parse_symbol_file(path, "repo"))
     return entries
 
 
-def _scan_repo_footprints(directory: Path) -> list[LibraryEntry]:
+def _scan_repo_footprints(directory: Path, show_progress: bool) -> list[LibraryEntry]:
     entries: list[LibraryEntry] = []
     if directory.is_dir():
-        for path in sorted(directory.rglob("*.pretty")):
+        paths = sorted(directory.rglob("*.pretty"))
+        for path in _progress(paths, "Indexing repository footprints", show_progress):
             entries.extend(_parse_footprint_library(path, "repo"))
     return entries
 
 
-def _scan_symbol_directory(directory: Path, source: str) -> list[LibraryEntry]:
+def _scan_symbol_directory(
+    directory: Path, source: str, show_progress: bool
+) -> list[LibraryEntry]:
     entries: list[LibraryEntry] = []
-    for path in sorted(directory.glob("*.kicad_sym")):
+    paths = sorted(directory.glob("*.kicad_sym"))
+    description = f"Indexing {source} symbols"
+    for path in _progress(paths, description, show_progress):
         entries.extend(_parse_symbol_file(path, source))
     return entries
 
 
-def _scan_footprint_directory(directory: Path, source: str) -> list[LibraryEntry]:
+def _scan_footprint_directory(
+    directory: Path, source: str, show_progress: bool
+) -> list[LibraryEntry]:
     entries: list[LibraryEntry] = []
-    for path in sorted(directory.glob("*.pretty")):
+    paths = sorted(directory.glob("*.pretty"))
+    description = f"Indexing {source} footprints"
+    for path in _progress(paths, description, show_progress):
         entries.extend(_parse_footprint_library(path, source))
     return entries
+
+
+def _progress(paths: list[Path], description: str, enabled: bool) -> Iterable[Path]:
+    if not enabled or not paths:
+        return paths
+    return tqdm(paths, desc=description, unit="library", dynamic_ncols=True)
 
 
 def _parse_symbol_file(path: Path, source: str) -> list[LibraryEntry]:

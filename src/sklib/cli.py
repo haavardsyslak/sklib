@@ -143,8 +143,8 @@ def _index(workspace: Workspace) -> int:
     from sklib.kicad.index import load_footprints, load_symbols
 
     started = time.perf_counter()
-    symbols = load_symbols(workspace)
-    footprints = load_footprints(workspace)
+    symbols = load_symbols(workspace, show_progress=True)
+    footprints = load_footprints(workspace, show_progress=True)
     elapsed = time.perf_counter() - started
     print(
         f"Indexed {len(symbols)} symbols and {len(footprints)} footprints "
